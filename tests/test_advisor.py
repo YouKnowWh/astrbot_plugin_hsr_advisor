@@ -78,6 +78,17 @@ class RefreshTests(unittest.TestCase):
             )
             self.assertEqual(request.call_count, 2)
 
+    def test_cached_lineup_link_uses_current_event_page(self):
+        lineup = "6ae2e8a44dedc0ec578a8fbe"
+        expected = (
+            "https://act.miyoushe.com/sr/event/currency-wars/index.html#/lineup/"
+            + lineup
+        )
+        plan = {"来源": currency.LEGACY_GUIDE + lineup, "标题": "攻略"}
+        fixed = currency.current_source(plan)
+        self.assertEqual(fixed, {"来源": expected, "标题": "攻略"})
+        self.assertEqual(currency.current_source(fixed), fixed)
+
     def test_revision_reused(self):
         old = {"sha": "a" * 40}
         with patch.object(regular, "request_json", return_value=old) as request:

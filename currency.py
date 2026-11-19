@@ -6,7 +6,20 @@ from .cache import request_json
 
 BASE = "https://act-api-takumi.miyoushe.com/event/rpgcurrencywar/game/"
 HEADERS = {"x-rpc-currencywar-tourn": "tourn", "x-rpc-platform": "pc"}
-GUIDE = "https://act.miyoushe.com/sr/event/e20241220rpg-3Tii9M/index.html#/lineup/"
+GUIDE = "https://act.miyoushe.com/sr/event/currency-wars/index.html#/lineup/"
+
+
+LEGACY_GUIDE = (
+    "https://act.miyoushe.com/sr/event/e20241220rpg-3Tii9M/index.html#/lineup/"
+)
+
+
+def current_source(plan):
+    """Upgrade links in snapshots saved by v1.0.0, including offline snapshots."""
+    source = plan["来源"]
+    if source.startswith(LEGACY_GUIDE):
+        return {**plan, "来源": GUIDE + source.removeprefix(LEGACY_GUIDE)}
+    return plan
 
 
 def api(path, payload=None):

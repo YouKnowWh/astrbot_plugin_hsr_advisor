@@ -49,6 +49,6 @@ class Advisor:
             info,
             攻略核对时间=checked_at(fetched),
             刷新失败沿用缓存=stale or old,
-            当前赛季社区攻略=plans,
+            当前赛季社区攻略=[currency.current_source(plan) for plan in plans],
             范围="米游社热度排序首页，最多返回三套匹配方案",
         )

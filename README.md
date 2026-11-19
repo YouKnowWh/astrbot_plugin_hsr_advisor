@@ -21,7 +21,7 @@
 | --- | --- | --- |
 | 常规角色、行迹、星魂、光锥和叠影 | [StarRailRes 中文数据](https://github.com/Mar-7th/StarRailRes/tree/master/index_min/cn) | 首次使用下载。之后每 6 小时在下次查询时检查上游提交。有变化就用同一个提交重新读取整组数据，已有角色和光锥的改动也会更新。 |
 | 当季员工、羁绊、装备、投资环境、投资策略、主角光环 | 米游社「货币战争」公开配置接口 | 每小时在下次查询时获取版本、赛季和条目。 |
-| 社区阵容、前后台站位、装备和过渡思路 | [米游社货币战争阵容工具](https://act.miyoushe.com/sr/event/e20241220rpg-3Tii9M/index.html) | 按赛季与核心员工缓存 1 小时，取热度首页中版本和赛季相符的最多三条，过滤已过期阵容。 |
+| 社区阵容、前后台站位、装备和过渡思路 | [米游社货币战争阵容工具](https://act.miyoushe.com/sr/event/currency-wars/index.html) | 按赛季与核心员工缓存 1 小时，取热度首页中版本和赛季相符的最多三条，过滤已过期阵容。 |
 
 无人提问期间不轮询。缓存保存在 AstrBot 的插件数据目录 `plugin_data/astrbot_plugin_hsr_advisor/`。刷新失败会保留上一份成功数据，返回缓存时间，1 分钟后可重试。新版本收录时间取决于上游。服务器需要能访问 `api.github.com`、`raw.githubusercontent.com` 和 `act-api-takumi.miyoushe.com`。接口结构变化时，插件代码可通过 AstrBot 的插件更新功能升级。
 
