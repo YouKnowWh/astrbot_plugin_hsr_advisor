@@ -6,8 +6,10 @@ import logging
 import os
 import sqlite3
 import time
+from http.client import IncompleteRead, RemoteDisconnected
 from pathlib import Path
 from threading import Lock
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 log = logging.getLogger(__name__)
@@ -20,8 +22,18 @@ def request_json(url, payload=None, headers=None):
         data = json.dumps(payload).encode()
         hdr["Content-Type"] = "application/json"
     hdr.update(headers or {})
-    with urlopen(Request(url, data=data, headers=hdr), timeout=10) as response:
-        raw = response.read(16 * 1024 * 1024 + 1)
+    request = Request(url, data=data, headers=hdr)
+    for attempt in range(2):
+        try:
+            with urlopen(request, timeout=10) as response:
+                raw = response.read(16 * 1024 * 1024 + 1)
+            break
+        except HTTPError as exc:
+            if attempt or exc.code not in (502, 503, 504):
+                raise
+        except (TimeoutError, URLError, IncompleteRead, RemoteDisconnected):
+            if attempt:
+                raise
     if len(raw) > 16 * 1024 * 1024:
         raise ValueError("数据响应超出预期大小")
     return json.loads(raw)

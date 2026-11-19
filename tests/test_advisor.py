@@ -3,6 +3,7 @@ import sys
 import tempfile
 import unittest
 from concurrent.futures import ThreadPoolExecutor
+from io import BytesIO
 from pathlib import Path
 from unittest.mock import patch
 
@@ -67,6 +68,15 @@ class RefreshTests(unittest.TestCase):
                 store.read("test", 60, lambda _: 1 / 0)
             clock.return_value = 161
             self.assertEqual(store.read("test", 60, lambda _: 5), (5, 161, False))
+
+    def test_transient_request_retried(self):
+        with patch.object(
+            cache, "urlopen", side_effect=[TimeoutError(), BytesIO(b'{"ok":true}')]
+        ) as request:
+            self.assertEqual(
+                cache.request_json("https://example.com/test"), {"ok": True}
+            )
+            self.assertEqual(request.call_count, 2)
 
     def test_revision_reused(self):
         old = {"sha": "a" * 40}
