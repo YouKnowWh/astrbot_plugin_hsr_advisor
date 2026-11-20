@@ -1,7 +1,7 @@
 name: astrbot_plugin_hsr_advisor
 display_name: 星铁配队与货币战争顾问
 desc: 按需更新角色、光锥和当季货币战争数据，为群聊提供配队、站位与运营建议。
-version: v1.0.2
+version: v1.0.3
 author: YouKnowWh
 repo: https://github.com/YouKnowWh/astrbot_plugin_hsr_advisor
 astrbot_version: ">=4.29.4,<5"
