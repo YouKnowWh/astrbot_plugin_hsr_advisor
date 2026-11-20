@@ -1,5 +1,6 @@
 import asyncio
 import json
+from inspect import iscoroutinefunction
 
 from astrbot.api.event import AstrMessageEvent, filter
 from astrbot.api.star import Context, Star, StarTools
@@ -14,7 +15,11 @@ class StarRailAdvisor(Star):
 
     async def _query(self, fn, *args):
         try:
-            result = await asyncio.to_thread(fn, *args)
+            result = (
+                await fn(*args)
+                if iscoroutinefunction(fn)
+                else await asyncio.to_thread(fn, *args)
+            )
         except (ValueError, OSError) as exc:
             result = {"查询失败": str(exc), "提示": "向群友说明缺少已核对的数据。"}
         return json.dumps(result, ensure_ascii=False)
@@ -67,5 +72,7 @@ class StarRailAdvisor(Star):
                 or f"{row['游戏版本']} 赛季 {row['赛季']}.{row['子赛季']}"
             )
             state = "上游暂不可达，使用旧缓存" if row["刷新失败沿用缓存"] else "可用"
-            lines.append(f"{label}：{version}，{state}。上次核对 {row['上次核对']}")
+            state = row.get("资料状态", state)
+            last = row["上次核对"] or "尚未在线核对"
+            lines.append(f"{label}：{version}，{state}。上次核对 {last}")
         yield event.plain_result("\n".join(lines))
